@@ -1,5 +1,6 @@
 package ru.hse.avk_spingbot.Service;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.hse.avk_spingbot.config.BotConfig;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -7,6 +8,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+@Slf4j
 @Service
 public class TelegramBot extends TelegramLongPollingBot {
 
@@ -60,7 +62,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     private void startCommandRecieved(long chatId, String name) {
 
         String answer = "Hi, " + name + "! Welcome to my bot!";
-
+        log.info("Replied to user " + name + " chatId: " + chatId);
         sendMessage(chatId, answer);
 
     }
@@ -73,7 +75,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         try {
             execute(message);
         } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+            log.error("Error occured!: " + e + " " + e.getMessage());
         }
 
 
