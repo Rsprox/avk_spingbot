@@ -1,0 +1,1 @@
+docker run --name pg-13.3 -p 5432:5432 -e POSTGRES_USER=testuser -e POSTGRES_PASSWORD=pgpwdtest -e POSTGRES_DB=firstdb -e PGDATA=/var/lib/postgresql/data/pgdata -d -v "/var/lib/docker-postgres/data":/var/lib/postgresql/data postgres:13.3

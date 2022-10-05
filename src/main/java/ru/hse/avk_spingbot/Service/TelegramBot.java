@@ -1,7 +1,10 @@
 package ru.hse.avk_spingbot.Service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
+import org.telegram.telegrambots.meta.api.objects.Chat;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 import ru.hse.avk_spingbot.config.BotConfig;
@@ -10,13 +13,19 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import ru.hse.avk_spingbot.model.User;
+import ru.hse.avk_spingbot.model.UserRepository;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 @Service
 public class TelegramBot extends TelegramLongPollingBot {
+
+    @Autowired
+    private UserRepository userRepository;
 
     final BotConfig config;
 
@@ -67,7 +76,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
             switch (messageText) {
                 case "/start":
-
+                    registerUser(update.getMessage());
                     startCommandRecieved(chatId, update.getMessage().getChat().getFirstName());
                     break;
                 case "/help":
@@ -78,6 +87,24 @@ public class TelegramBot extends TelegramLongPollingBot {
                     sendMessage(chatId, "Sorry, command did not recognized!");
 
             }
+        }
+    }
+
+    private void registerUser(Message msg) {
+        if(!userRepository.findById(msg.getChatId()).isPresent()){
+            Long chatId = msg.getChatId();
+            Chat chat = msg.getChat();
+
+            User user = new User();
+
+            user.setChatId(chatId);
+            user.setFirstName(chat.getFirstName());
+            user.setLastName(chat.getLastName());
+            user.setUserName(chat.getUserName());
+
+            user.setRegisteredAt(new Timestamp(System.currentTimeMillis()));
+            userRepository.save(user);
+            log.info("new user saved: " + user);
         }
     }
 
