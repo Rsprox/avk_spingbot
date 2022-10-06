@@ -1,5 +1,6 @@
 package ru.hse.avk_spingbot.Service;
 
+import com.vdurmont.emoji.EmojiParser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
@@ -7,6 +8,8 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import ru.hse.avk_spingbot.config.BotConfig;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -111,7 +114,8 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private void startCommandRecieved(long chatId, String name) {
 
-        String answer = "Hi, " + name + "! Welcome to my bot!";
+//        String answer = "Hi, " + name + "! Welcome to my bot!";
+        String answer = EmojiParser.parseToUnicode("Hi, " + name + "! Welcome to my bot!" + " :blush:");
         log.info("Replied to user " + name + " chatId: " + chatId);
         sendMessage(chatId, answer);
 
@@ -121,6 +125,31 @@ public class TelegramBot extends TelegramLongPollingBot {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText(messageToSend);
+
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+
+        List<KeyboardRow> keyboardRows = new ArrayList<>();
+
+        KeyboardRow row = new KeyboardRow();
+
+        // первый ряд кнопок
+        row.add("weather");
+        row.add("get random joke");
+
+        keyboardRows.add(row);
+
+        // второй ряд кнопок
+        row = new KeyboardRow();
+
+        row.add("register");
+        row.add("check my data");
+        row.add("delete my data");
+
+        keyboardRows.add(row);
+
+        keyboardMarkup.setKeyboard(keyboardRows);
+
+        message.setReplyMarkup(keyboardMarkup);
 
         try {
             execute(message);
