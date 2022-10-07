@@ -1,4 +1,4 @@
-package ru.hse.avk_spingbot.model;
+package ru.hse.avk_spingbot.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

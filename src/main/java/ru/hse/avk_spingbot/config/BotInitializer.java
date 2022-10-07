@@ -1,7 +1,7 @@
 package ru.hse.avk_spingbot.config;
 
 import lombok.extern.slf4j.Slf4j;
-import ru.hse.avk_spingbot.Service.TelegramBot;
+import ru.hse.avk_spingbot.controller.TelegramBot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -23,7 +23,7 @@ public class BotInitializer {
         try {
             telegramBotsApi.registerBot(bot);
         } catch (TelegramApiException e) {
-            log.error("Error occurred: " + " " + e.getMessage());
+            log.error("Error occurred: " + e + " " + e.getMessage());
         }
 
     }
