@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-
+    <!-- <property name="HOME_LOG" value="/var/log/ru.hse/avk_springbot/app.log"/> -->
     <property name="HOME_LOG" value="/home/pi/telegram-bots/avk_springbot/app.log"/>
 
     <appender name="FILE-ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">

@@ -176,6 +176,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         for (User user: allUsers) {
             prepareAndSendMessage(user.getChatId(), text);
         }
+        log.info("Sent message to everyone : " + text);
     }
 
     private void executeEditMessageText(int messageId, long chatId, String text) {
@@ -288,6 +289,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     private void executeMessage(SendMessage message) {
         try {
             execute(message);
+            log.info("Send message to chatId: " + message.getChatId());
         } catch (TelegramApiException e) {
             log.error(ERROR_TEXT + e + " " + e.getMessage());
         }
@@ -305,21 +307,21 @@ public class TelegramBot extends TelegramLongPollingBot {
      */
     @Scheduled(cron = "${cron.scheduler}")
     private void sendAds() {
-        log.info("scheduler started");
         Iterable<Announcement> allAds = announcementRepository.findAllByIsActive(true);
         for (Announcement ad: allAds) {
             sendMessageToAllUsers(ad.getAd_text());
             ad.setIsActive(false);
             announcementRepository.save(ad);
+            log.info("Ad sent to everyone");
         }
-        log.info("all ads sent");
     }
 
     @Scheduled(cron = "${cron.morning}")
     private void morningJoke() {
         log.info("scheduler morning started");
+        String joke_text = jokeRepository.findRandomOne();
         sendMessageToAllUsers("Доброе утро!\nЛовите утренний рандомный анекдот! :)");
-        sendMessageToAllUsers(jokeRepository.findRandomOne());
-        log.info("scheduler stopped sent");
+        sendMessageToAllUsers(joke_text);
+        log.info("scheduler morning stopped");
     }
 }

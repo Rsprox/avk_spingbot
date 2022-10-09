@@ -1,8 +1,7 @@
 package ru.hse.avk_spingbot.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -13,8 +12,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Component
-@PropertySource("application.properties")
 public class WeatherNow {
     private static HttpURLConnection conn;
 
@@ -41,6 +40,7 @@ public class WeatherNow {
                     responseContent.append(line);
                 }
                 reader.close();
+                log.error("Get bad HTTP statusCode from weatherAPI: " + status);
                 return null;
             }
             else {
@@ -51,13 +51,14 @@ public class WeatherNow {
                 reader.close();
             }
             List<String> result = parse(responseContent.toString());
+            log.info("Got weather answer for city: " + city + " -> " + result);
             return String.format("В городе %s %s \nТемпература: %s℃, ощущается как: %s℃", city, result.get(0), result.get(1), result.get(2));
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             conn.disconnect();
         }
-
+        log.error("Something went wrong with HTTP weather API request!");
         return null;
     }
     private static List<String> parse(String responseBody) {
