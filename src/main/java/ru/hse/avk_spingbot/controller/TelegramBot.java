@@ -291,7 +291,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             execute(message);
             log.info("Send message to chatId: " + message.getChatId());
         } catch (TelegramApiException e) {
-            log.error(ERROR_TEXT + e + " " + e.getMessage());
+            log.error(ERROR_TEXT + "chatId: " + message.getChatId() + " EXCEPTION: " + e + " EXCEPTION MESSSAGE: " + e.getMessage());
         }
     }
 
